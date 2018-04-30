@@ -1,2 +1,14 @@
-<!DOCTYPE RCC>
-<RCC version="1.0"/>
+<RCC>
+    <qresource prefix="/menu">
+        <file>img/Open_32x32.png</file>
+        <file>img/Save_32x32.png</file>
+        <file>img/Close_32x32.png</file>
+        <file>img/Exit_32x32.png</file>
+        <file>img/Zoom In_32x32.png</file>
+        <file>img/Zoom Out_32x32.png</file>
+        <file>img/Fil_to_window_32x32.png</file>
+    </qresource>
+    <qresource prefix="/label">
+        <file>img/Background_512x512.png</file>
+    </qresource>
+</RCC>
