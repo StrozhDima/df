@@ -25,17 +25,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    settings.cpp \
     filemanager.cpp \
-    ui.cpp
+    ui.cpp \
+    calibrationui.cpp \
+    settings.cpp
 
 HEADERS += \
     filemanager.h \
-    settings.h \
-    ui.h
+    ui.h \
+    calibrationui.h \
+    settings.h
 
 FORMS += \
-        ui.ui
+        ui.ui \
+    calibrationui.ui
 
 INCLUDEPATH += D:\opencv\build\include
 

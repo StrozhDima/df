@@ -12,9 +12,12 @@ class FileManager
 {
 public:
     FileManager();
-    static QImage loadFile(const QString fileName);
-    static bool saveFile(const QString &fileName, const QImage &image);
+    static QImage loadImageFile(const QString fileName);
+    static bool saveImageFile(const QString &fileName, const QImage &image);
     static void initialize(QFileDialog *dialog, QFileDialog::AcceptMode acceptMode, const QString &mimeTypeFilter, const QString &suffix);
+    static QString openFolder(QWidget *parent);
+    static QString loadParamsFile(const QString fileName);
+    static bool saveParamsFile(const QString &fileName, const QString &params);
 private:
 
 };

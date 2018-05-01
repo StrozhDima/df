@@ -1,24 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
- <class>CalicrationUI</class>
- <widget name="CalicrationUI" class="QMainWindow">
+ <class>CalibrationUI</class>
+ <widget class="QMainWindow" name="CalibrationUI">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>330</width>
+    <height>446</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
-  <widget name="menubar" class="QMenuBar"/>
-  <widget name="centralwidget" class="QWidget"/>
-  <widget name="statusbar" class="QStatusBar"/>
+  <property name="minimumSize">
+   <size>
+    <width>330</width>
+    <height>446</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>330</width>
+    <height>446</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Калибровка камеры</string>
+  </property>
+  <property name="windowOpacity">
+   <double>0.850000000000000</double>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>309</width>
+      <height>377</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="QGroupBox" name="group_box_type_pattern">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>290</width>
+             <height>130</height>
+            </size>
+           </property>
+           <property name="title">
+            <string>Тип планара (паттерна):</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QRadioButton" name="radio_button_chess">
+              <property name="minimumSize">
+               <size>
+                <width>250</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Шахматная доска</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">type_button_group</string>
+              </attribute>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radio_button_circle_grid">
+              <property name="minimumSize">
+               <size>
+                <width>250</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Сетка с окружностями</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">type_button_group</string>
+              </attribute>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radio_button_as_circle_grid">
+              <property name="minimumSize">
+               <size>
+                <width>250</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Ассиметричная сетка с окружностями</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">type_button_group</string>
+              </attribute>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QLabel" name="label_width">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>250</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Количество элементов по горизонтали:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_height">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>250</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Количество элементов по вертикали:</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="QSpinBox" name="spin_box_width">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="specialValueText">
+                <string notr="true"/>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>30</number>
+               </property>
+               <property name="value">
+                <number>5</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spin_box_height">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>30</number>
+               </property>
+               <property name="value">
+                <number>7</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="group_box_type_wrap">
+         <property name="minimumSize">
+          <size>
+           <width>290</width>
+           <height>90</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Тип искажения:</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QRadioButton" name="radio_button_radial">
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Радиальное</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radio_button_tangencial">
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Тангенциальное</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_calibration">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Выполнить калибровку</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="progress_bar_calibration">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>330</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="open_folder"/>
+    <addaction name="exit_calibration"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="status_bar"/>
+  <action name="open_folder">
+   <property name="text">
+    <string>Выбрать папку</string>
+   </property>
+  </action>
+  <action name="exit_calibration">
+   <property name="text">
+    <string>Выйти</string>
+   </property>
+  </action>
  </widget>
- <pixmapfunction/>
+ <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="type_button_group"/>
+ </buttongroups>
 </ui>
