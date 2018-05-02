@@ -53,7 +53,7 @@ void UI::on_open_file_triggered()
 	if(this->fileDialog->exec() == QDialog::Accepted) {
 		this->fileName = this->fileDialog->selectedFiles().first();
 		this->image = FileManager::loadImageFile(this->fileName);
-		const QString message = tr("Opened \"%1\", %2x%3, Depth: %4").arg(QDir::toNativeSeparators(this->fileName)).arg(this->image.width()).arg(this->image.height()).arg(this->image.depth());
+		const QString message = tr("Открыт \"%1\", %2x%3, Глубина: %4").arg(QDir::toNativeSeparators(this->fileName)).arg(this->image.width()).arg(this->image.height()).arg(this->image.depth());
 		statusBar()->showMessage(message);
 		setImageToLabel(this->image);
 		updateActions();
@@ -67,7 +67,7 @@ void UI::on_save_file_as_triggered()
 	if(this->fileDialog->exec() == QDialog::Accepted) {
 		this->fileName = this->fileDialog->selectedFiles().first();
 		FileManager::saveImageFile(this->fileName, this->image);
-		const QString message = tr("Wrote \"%1\"").arg(QDir::toNativeSeparators(this->fileName));
+		const QString message = tr("Сохранен \"%1\"").arg(QDir::toNativeSeparators(this->fileName));
 		statusBar()->showMessage(message);
 		updateActions();
 	}
@@ -119,79 +119,59 @@ void UI::on_push_button_apply_clicked()
 {
 	qDebug() << "Format image: " << this->image.format();
 	Mat matImage;
-	qImageToMat(this->image, matImage);
+	Utils::qImageToMat(this->image, matImage);
 
 	Mat newMatImage = this->calibUI->remapImage(matImage);
 
-	matToQImage(newMatImage, this->image);
+	Utils::matToQImage(newMatImage, this->image);
 	setImageToLabel(this->image);
 }
 
-//преобразовать QImage в Mat
-void UI::qImageToMat(const QImage& image, OutputArray out) {
-
-	switch(image.format()) {
-		case QImage::Format_Invalid:
-		{
-			Mat empty;
-			empty.copyTo(out);
-			break;
-		}
-		case QImage::Format_RGB32:
-		{
-			Mat view(image.height(),image.width(),CV_8UC4,(void *)image.constBits(),image.bytesPerLine());
-			view.copyTo(out);
-			break;
-		}
-		case QImage::Format_RGB888:
-		{
-			Mat view(image.height(),image.width(),CV_8UC3,(void *)image.constBits(),image.bytesPerLine());
-			cvtColor(view, out, COLOR_RGB2BGR);
-			break;
-		}
-		default:
-		{
-			QImage conv = image.convertToFormat(QImage::Format_ARGB32);
-			Mat view(conv.height(),conv.width(),CV_8UC4,(void *)conv.constBits(),conv.bytesPerLine());
-			view.copyTo(out);
-			break;
-		}
-	}
-}
-
-//преобразовать Mat в QImage
-//QImage::Format_ARGB32
-void UI::matToQImage(InputArray image, QImage& out)
+//нажата кнопка "Сохранить настройки"
+void UI::on_save_settings_triggered()
 {
-	switch(image.type())
+	QString fileName =  QFileDialog::getSaveFileName(0, "Сохранение параметров камеры", QDir::currentPath(), "Matrix (*.yml);;Matrix (*.xml);;All files (*.*)", new QString("Matrix (*.yml)"));
+
+	qDebug() << "Save matrix to file:" << fileName;
+
+	if(fileName.length() > 1)
 	{
-		case CV_8UC4:
-		{
-			Mat view(image.getMat());
-			QImage view2(view.data, view.cols, view.rows, view.step[0], QImage::Format_ARGB32);
-			out = view2.copy();
-			break;
-		}
-		case CV_8UC3:
-		{
-			Mat mat;
-			cvtColor(image, mat, COLOR_BGR2BGRA); //COLOR_BGR2RGB doesn't behave so use RGBA
-			QImage view(mat.data, mat.cols, mat.rows, mat.step[0], QImage::Format_ARGB32);
-			out = view.copy();
-			break;
-		}
-		case CV_8UC1:
-		{
-			Mat mat;
-			cvtColor(image, mat, COLOR_GRAY2BGRA);
-			QImage view(mat.data, mat.cols, mat.rows, mat.step[0], QImage::Format_ARGB32);
-			out = view.copy();
-			break;
-		}
-		default:
-		{
-			throw invalid_argument("Image format not supported");
-			break;
-		}
+		if(Settings::saveSettings(this->calibUI->getCameraMatrix(), this->calibUI->getDistCoeffs(),fileName.toStdString().c_str()))
+			QMessageBox::information(this, "Успех", QString("Настройки успешно сохранены в файл: %1").arg(fileName));
+		else
+			QMessageBox::critical(this, "Ошибка!", QString("Настройки не были сохранены в файл: %1").arg(fileName));
+
+		QString cameraMatrix = Utils::settingsToString(this->calibUI->getCameraMatrix());
+		QString distorsCoeff = Utils::settingsToString(this->calibUI->getDistCoeffs());
+		qDebug() << "Saved camera matrix:" << cameraMatrix;
+		qDebug() << "Saved distors coeffs:" << distorsCoeff;
 	}
 }
+
+//нажата кнопка "Загрузить настройки"
+void UI::on_open_settings_triggered()
+{
+	QString fileName = QFileDialog::getOpenFileName(0, "Загрузка параметров камеры", QDir::currentPath(), "Matrix (*.yml);;Matrix (*.xml);;All files (*.*)", new QString("Matrix (*.yml)"));
+
+	qDebug() << "Open matrix from file:" << fileName;
+
+	if(fileName.length() > 1)
+	{
+	Mat cameraMatrix;
+	Mat distorsCoeff;
+	if(Settings::loadSettings(fileName.toStdString().c_str(), cameraMatrix, distorsCoeff))
+	{
+		QMessageBox::information(this, "Успех", QString("Настройки успешно загружены из файла: %1").arg(fileName));
+		this->calibUI->setCameraMatrix(cameraMatrix);
+		this->calibUI->setDistCoeffs(distorsCoeff);
+	}
+	else
+		QMessageBox::critical(this, "Ошибка!", QString("Настройки не были загружены из файла: %1").arg(fileName));
+
+	QString strCameraMatrix = Utils::settingsToString(this->calibUI->getCameraMatrix());
+	QString strDistorsCoeff = Utils::settingsToString(this->calibUI->getDistCoeffs());
+	qDebug() << "Opened camera matrix:" << strCameraMatrix;
+	qDebug() << "Opened distors coeffs:" << strDistorsCoeff;
+	}
+}
+

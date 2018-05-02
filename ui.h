@@ -3,10 +3,12 @@
 
 #include "ui_ui.h"
 #include <QDebug>
-#include<QMainWindow>
-#include<QLabel>
-#include"filemanager.h"
-#include"calibrationui.h"
+#include <QMainWindow>
+#include <QLabel>
+#include "filemanager.h"
+#include "calibrationui.h"
+#include "settings.h"
+#include "utils.h"
 
 namespace Ui {
 class UI;
@@ -22,8 +24,6 @@ public:
     void setImageToLabel(const QImage &image);
     void scaleImage(double factor);
     void updateActions();
-    void qImageToMat(const QImage &image, OutputArray out);
-    void matToQImage(InputArray image, QImage &out);
 private slots:
     void on_open_file_triggered();
     void on_save_file_as_triggered();
@@ -35,6 +35,8 @@ private slots:
     void on_fil_to_window_triggered();
     void on_calibr_camera_triggered();
     void on_push_button_apply_clicked();
+    void on_save_settings_triggered();
+    void on_open_settings_triggered();
 private:
     Ui::UI *ui;
     QFileDialog *fileDialog;

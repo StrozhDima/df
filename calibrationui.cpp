@@ -8,7 +8,6 @@ CalibrationUI::CalibrationUI(QWidget *parent) :
     mustInitUndistort(true)
 {
     ui->setupUi(this);
-    calibrationPattern = NOT_EXISTING;
 }
 
 CalibrationUI::~CalibrationUI()
@@ -28,25 +27,7 @@ QFileInfoList CalibrationUI::getFilesFromDir(QString folderPath)
 
 void CalibrationUI::getIntristicParams(QString folderPath)
 {
-    int boardW = (int)ui->spin_box_width->value();
-    int boardH = (int)ui->spin_box_height->value();
 
-    //количество внутренних углов на шахматной доске
-    Size boardSize(boardW - 1, boardH - 1);
-    //список файлов в каталоге
-    QFileInfoList list = getFilesFromDir(folderPath);
-    addChessboardPoints(list, boardSize);
-
-    if(ui->radio_button_radial->isChecked())
-        setCalibrationFlag(true, false);
-
-    if(ui->radio_button_tangencial->isChecked())
-        setCalibrationFlag(false, true);
-
-    double error = calibrate(globalImageSize);
-
-    qDebug() << "Error after calibrate: " << to_string(error).c_str();
-    QMessageBox::information(this, "Успех", QString("Общая ошибка после калибровки: %1").arg(error));
 }
 
 int CalibrationUI::addChessboardPoints(const QFileInfoList &filelist, Size &boardSize)
@@ -124,7 +105,23 @@ int CalibrationUI::addChessboardPoints(const QFileInfoList &filelist, Size &boar
 void CalibrationUI::on_button_calibration_clicked()
 {
     qDebug() << "нажата кнопка Выполнить калибровку";
-    getIntristicParams(this->folderName);
+    int boardW = (int)ui->spin_box_width->value();
+    int boardH = (int)ui->spin_box_height->value();
+
+    //количество внутренних углов на шахматной доске
+    Size boardSize(boardW - 1, boardH - 1);
+    //список файлов в каталоге
+    QFileInfoList list = getFilesFromDir(this->folderName);
+    addChessboardPoints(list, boardSize);
+
+    if(ui->radio_button_radial->isChecked())
+        setCalibrationFlag(true, false);
+    if(ui->radio_button_tangencial->isChecked())
+        setCalibrationFlag(false, true);
+
+    double error = calibrate(globalImageSize);
+    qDebug() << "Error after calibrate: " << to_string(error).c_str();
+    QMessageBox::information(this, "Успех", QString("Общая ошибка после калибровки: %1").arg(error));
 }
 
 void CalibrationUI::on_open_folder_triggered()

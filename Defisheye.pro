@@ -28,13 +28,15 @@ SOURCES += \
     filemanager.cpp \
     ui.cpp \
     calibrationui.cpp \
-    settings.cpp
+    settings.cpp \
+    utils.cpp
 
 HEADERS += \
     filemanager.h \
     ui.h \
     calibrationui.h \
-    settings.h
+    settings.h \
+    utils.h
 
 FORMS += \
         ui.ui \
