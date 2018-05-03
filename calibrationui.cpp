@@ -8,6 +8,7 @@ CalibrationUI::CalibrationUI(QWidget *parent) :
     mustInitUndistort(true)
 {
     ui->setupUi(this);
+    connect(this, SIGNAL(closeWindow()), this->parent(), SLOT(updateSpinners()));
 }
 
 CalibrationUI::~CalibrationUI()
@@ -95,7 +96,7 @@ int CalibrationUI::addChessboardPoints(const QFileInfoList &filelist, Size &boar
         // рисуем углы
         drawChessboardCorners(image, boardSize, imageCorners, found);
         imshow(file.c_str(), image);
-        waitKey(500);
+        waitKey(100);
         // закрыть окно с планаром
         destroyWindow(file.c_str());
     }
@@ -121,7 +122,8 @@ void CalibrationUI::on_button_calibration_clicked()
 
     double error = calibrate(globalImageSize);
     qDebug() << "Error after calibrate: " << to_string(error).c_str();
-    QMessageBox::information(this, "Успех", QString("Общая ошибка после калибровки: %1").arg(error));
+    if(QMessageBox::information(this, "Успех", QString("Общая ошибка после калибровки: %1").arg(error)) == QMessageBox::Ok)
+        emit closeWindow();
 }
 
 void CalibrationUI::on_open_folder_triggered()
@@ -156,7 +158,6 @@ double CalibrationUI::calibrate(Size &imageSize)
                            distCoeffs,   // выходная матрица дисторсии
                            rvecs, tvecs, // параметры Rs, Ts
                            flag);        // опции при калибровке
-    //					,CV_CALIB_USE_INTRINSIC_GUESS);
 }
 
 // удаление искажений изображения (после калибровки)
@@ -187,10 +188,20 @@ void CalibrationUI::setCalibrationFlag(bool radial8CoeffEnabled, bool tangential
     // установка флага, используемого в calibrateCamera()
     flag = 0;
     if (!tangentialParamEnabled) flag += CV_CALIB_ZERO_TANGENT_DIST;
-    if (radial8CoeffEnabled) flag += CV_CALIB_RATIONAL_MODEL;
+    if (radial8CoeffEnabled) flag += CV_CALIB_FIX_K6;//CV_CALIB_RATIONAL_MODEL;
 }
 
 void CalibrationUI::on_exit_calibration_triggered()
 {
     this->close();
+}
+
+bool CalibrationUI::getMustInitUndistort() const
+{
+    return mustInitUndistort;
+}
+
+void CalibrationUI::setMustInitUndistort(bool value)
+{
+    mustInitUndistort = value;
 }

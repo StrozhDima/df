@@ -45,10 +45,15 @@ public:
     // Setters
     void setCameraMatrix(const Mat &cameraMatrix) {this->cameraMatrix = cameraMatrix;}
     void setDistCoeffs(const Mat &distCoeffs) {this->distCoeffs = distCoeffs;}
+    bool getMustInitUndistort() const;
+    void setMustInitUndistort(bool value);
+
 private slots:
     void on_button_calibration_clicked();
     void on_open_folder_triggered();
     void on_exit_calibration_triggered();
+signals:
+    void closeWindow();
 private:
     Ui::CalibrationUI *ui;
     QFileDialog *fileDialog;
