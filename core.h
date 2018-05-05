@@ -1,6 +1,7 @@
 #ifndef CORE_H
 #define CORE_H
 #include "calibrationcamera.h"
+#include "manualcorrect.h"
 #include "utils.h"
 
 class Core
@@ -18,8 +19,11 @@ public:
     void setMustInitUndistort(bool doUndistort);
     double calibrationCamera(const QFileInfoList &filelist, TypePlanar type, bool isRadial, bool isTangenc, int boardW, int boardH);
     void undistortCameraCalibration(const QImage &imageSource, QImage &imageDest);
+    void manualCorrection(const float strength, const float zoom, const QImage &inputImage, QImage &outputImage);
+    void cropImage(const QImage &inputImage, QImage &outputImage, int height, int width);
 private:
     CalibrationCamera calibCamera;
+    ManualCorrect manualCorrecting;
     Mat cameraMatrix;
     Mat distCoeffs;
 };

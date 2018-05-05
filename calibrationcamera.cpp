@@ -133,5 +133,5 @@ void CalibrationCamera::setCalibrationFlag(bool radial8CoeffEnabled, bool tangen
     // установка флага, используемого в calibrateCamera()
     flag = 0;
     if (!tangentialParamEnabled) flag += CV_CALIB_ZERO_TANGENT_DIST;
-    if (radial8CoeffEnabled) flag += CV_CALIB_RATIONAL_MODEL;//CV_CALIB_FIX_K6;
+    if (radial8CoeffEnabled) flag += CV_CALIB_FIX_K6;//CV_CALIB_RATIONAL_MODEL;
 }

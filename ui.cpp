@@ -60,6 +60,7 @@ void UI::on_open_file_triggered()
 		statusBar()->showMessage(message);
 		setImageToLabel(this->image);
 		updateActions();
+		updateManualSpinners(false);
 		core->setMustInitUndistort(true);
 	}
 }
@@ -85,6 +86,7 @@ void UI::on_close_file_triggered()
 	this->labelImage->setPixmap(*this->pixmap);
 	this->labelImage->resize(ui->scrollArea->size());
 	updateActions();
+	updateManualSpinners(true);
 }
 
 //нажата кнопка "Выйти"
@@ -122,8 +124,14 @@ void UI::on_calibr_camera_triggered()
 void UI::on_push_button_apply_clicked()
 {
 	qDebug() << "Нажата кнопка Применить";
+	//вкладка Автоматическая коррекция
+	if(ui->tabWidget->currentIndex() == 0)
+	{
 	setMatrixes();
 	applySettings();
+	}
+
+	applyManualSetting();
 }
 
 //нажата кнопка "Сохранить настройки"
@@ -173,12 +181,38 @@ void UI::on_open_settings_triggered()
 	}
 }
 
+void UI::on_slider_strength_sliderMoved(int position)
+{
+	qDebug() << "Сработал slider_strength: " << position;
+	applyManualSetting();
+}
+
+void UI::on_slider_zoom_sliderMoved(int position)
+{
+	qDebug() << "Сработал slider_zoom: " << position;
+	applyManualSetting();
+}
+
 //применить параметры
 void UI::applySettings()
 {
 	qDebug() << "Сработал метод applySettings()";
 	core->undistortCameraCalibration(this->image, this->processedImage);
 	setImageToLabel(this->processedImage);
+}
+
+void UI::applyManualSetting()
+{
+	//вкладка Ручная коррекция
+	if(ui->tabWidget->currentIndex() == 1)
+	{
+		qDebug() << "вкладка Ручная коррекция enable";
+		core->manualCorrection(float(ui->slider_strength->value()/1000.0f), float(ui->slider_zoom->value()/1000.0f), this->image, this->processedImage);
+		QImage cropImage;
+		core->cropImage(this->processedImage, cropImage, ui->spin_box_height->value(), ui->spin_box_width->value());
+		this->processedImage = cropImage;
+		setImageToLabel(this->processedImage);
+	}
 }
 
 //Mat cameraMatrix = (Mat1d(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
@@ -195,7 +229,7 @@ void UI::setMatrixes()
 							ui->spin_box_cx->value(), 0,
 							ui->spin_box_fy->value(), ui->spin_box_cy->value(),
 							0, 0, 1);
-qDebug() << "ЗДЕСЬ";
+
 		Mat distortionCoefficients = (Mat1d(1, 14) <<
 									  ui->spin_box_k1->value(),
 									  ui->spin_box_k2->value(),
@@ -206,24 +240,15 @@ qDebug() << "ЗДЕСЬ";
 									  ui->spin_box_k5->value(),
 									  ui->spin_box_k6->value(),
 									  0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-qDebug() << "ЗДЕСЬ 2";
+
 		if(this->core->setCameraMatrix(cameraMatrix))
 			core->setMustInitUndistort(true);
-		qDebug() << "ЗДЕСЬ 3";
-
 		if(this->core->setDistCoeffs(distortionCoefficients))
 			core->setMustInitUndistort(true);
-qDebug() << "ЗДЕСЬ 4";
 		QString strCameraMatrix = Utils::MatToString(this->core->getCameraMatrix());
 		QString strDistorsCoeff = Utils::MatToString(this->core->getDistCoeffs());
 		qDebug() << "Set camera matrix:" << strCameraMatrix;
 		qDebug() << "Set distors coeffs:" << strDistorsCoeff;
-	}
-
-	//вкладка Ручная коррекция
-	if(ui->tabWidget->currentIndex() == 1)
-	{
-
 	}
 }
 
@@ -257,4 +282,18 @@ void UI::setSpinners()
 	ui->spin_box_k6->setValue(this->core->getDistCoeffs().at<double>(0, 7));
 	core->setMustInitUndistort(true);
 
+}
+
+void UI::updateManualSpinners(bool zero)
+{
+	if(zero)
+	{
+		ui->spin_box_width->setValue(0);
+		ui->spin_box_height->setValue(0);
+	}
+	else
+	{
+		ui->spin_box_width->setValue(this->image.width());
+		ui->spin_box_height->setValue(this->image.height());
+	}
 }

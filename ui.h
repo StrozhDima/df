@@ -25,6 +25,8 @@ public:
     void updateActions();
     void setMatrixes();
     void applySettings();
+    void updateManualSpinners(bool zero);
+    void applyManualSetting();
 private slots:
     void on_open_file_triggered();
     void on_save_file_as_triggered();
@@ -38,6 +40,8 @@ private slots:
     void on_push_button_apply_clicked();
     void on_save_settings_triggered();
     void on_open_settings_triggered();
+    void on_slider_strength_sliderMoved(int position);
+    void on_slider_zoom_sliderMoved(int position);
 public slots:
     void setSpinners();
 private:

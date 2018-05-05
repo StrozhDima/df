@@ -57,6 +57,22 @@ void Core::undistortCameraCalibration(const QImage &imageSource, QImage &imageDe
     Utils::matToQImage(calibCamera.remapImage(matImage, this->cameraMatrix, this->distCoeffs), imageDest);
 }
 
+void Core::manualCorrection(const float strength, const float zoom, const QImage &inputImage, QImage &outputImage)
+{
+    float s = strength;
+    float z = zoom;
+    if(s <= 0.0) s = 0.00001f;
+    if(z < 1.0) z = 1.0f;
+    QImage newImage = this->manualCorrecting.undistorsing(s, z, inputImage);
+    outputImage = newImage;
+}
+
+void Core::cropImage(const QImage &inputImage, QImage &outputImage, int height, int width)
+{
+    QImage newImage = this->manualCorrecting.cropBlackBorder(inputImage, height, width);
+    outputImage = newImage;
+}
+
 bool Core::setCameraMatrix(const Mat &cameraMatrix)
 {
     Mat diff = this->cameraMatrix != cameraMatrix;
