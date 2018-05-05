@@ -13,7 +13,7 @@ class Utils
 {
 public:
     Utils();
-    static QString settingsToString(const Mat &matrix);
+    static QString MatToString(const Mat &matrix);
     static void qImageToMat(const QImage &image, OutputArray out);
     static void matToQImage(InputArray image, QImage &out);
 };

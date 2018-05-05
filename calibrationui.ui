@@ -230,10 +230,16 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QRadioButton" name="radio_button_radial">
+           <widget class="QCheckBox" name="check_box_radial">
             <property name="minimumSize">
              <size>
-              <width>250</width>
+              <width>281</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>281</width>
               <height>20</height>
              </size>
             </property>
@@ -246,10 +252,16 @@
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radio_button_tangencial">
+           <widget class="QCheckBox" name="check_box_tangenc">
             <property name="minimumSize">
              <size>
-              <width>250</width>
+              <width>281</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>281</width>
               <height>20</height>
              </size>
             </property>

@@ -8,7 +8,6 @@
 #include "filemanager.h"
 #include "calibrationui.h"
 #include "settings.h"
-#include "utils.h"
 
 namespace Ui {
 class UI;
@@ -39,31 +38,11 @@ private slots:
     void on_push_button_apply_clicked();
     void on_save_settings_triggered();
     void on_open_settings_triggered();
-
-    /*void on_spin_box_fx_diag_valueChanged(double arg1);
-    void on_spin_box_cx_diag_valueChanged(double arg1);
-    void on_spin_box_fy_diag_valueChanged(double arg1);
-    void on_spin_box_cy_diag_valueChanged(double arg1);
-    void on_spin_box_k1_diag_valueChanged(double arg1);
-    void on_spin_box_k2_diag_valueChanged(double arg1);
-    void on_spin_box_k3_diag_valueChanged(double arg1);
-    void on_spin_box_p1_diag_valueChanged(double arg1);
-    void on_spin_box_p2_diag_valueChanged(double arg1);
-
-    void on_spin_box_fx_cir_valueChanged(double arg1);
-    void on_spin_box_fy_cir_valueChanged(double arg1);
-    void on_spin_box_cx_cir_valueChanged(double arg1);
-    void on_spin_box_cy_cir_valueChanged(double arg1);
-    void on_spin_box_k1_cir_valueChanged(double arg1);
-    void on_spin_box_k2_cir_valueChanged(double arg1);
-    void on_spin_box_k3_cir_valueChanged(double arg1);
-    void on_spin_box_p1_cir_valueChanged(double arg1);
-    void on_spin_box_p2_cir_valueChanged(double arg1);
-*/
 public slots:
-    void updateSpinners();
+    void setSpinners();
 private:
     Ui::UI *ui;
+    Core *core;
     QFileDialog *fileDialog;
     double scaleFactor;
     QImage image;

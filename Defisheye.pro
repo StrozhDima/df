@@ -29,14 +29,20 @@ SOURCES += \
     ui.cpp \
     calibrationui.cpp \
     settings.cpp \
-    utils.cpp
+    utils.cpp \
+    calibrationcamera.cpp \
+    core.cpp \
+    manualcorrect.cpp
 
 HEADERS += \
     filemanager.h \
     ui.h \
     calibrationui.h \
     settings.h \
-    utils.h
+    utils.h \
+    calibrationcamera.h \
+    core.h \
+    manualcorrect.h
 
 FORMS += \
         ui.ui \

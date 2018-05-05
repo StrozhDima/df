@@ -1,6 +1,6 @@
 #include "utils.h"
 
-QString Utils::settingsToString(const Mat &matrix)
+QString Utils::MatToString(const Mat &matrix)
 {
     ostringstream oss;
     oss << matrix << endl;
