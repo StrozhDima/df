@@ -2,10 +2,9 @@
 
 ManualCorrect::ManualCorrect()
 {
-
 }
 
-QImage ManualCorrect::undistorsing(const float strength, const float zoom, const QImage &inputImage)
+QImage ManualCorrect::undistorsing(const float strength, const float zoom, const QImage &inputImage, bool antialias)
 {
     QImage outputImage(inputImage.width(), inputImage.height(), inputImage.format());
 
@@ -17,20 +16,13 @@ QImage ManualCorrect::undistorsing(const float strength, const float zoom, const
     const size_t halfWidth = width / 2;
     const size_t halfHeight = height / 2;
 
-    const float correction_strength = strength / sqrt(width * width + height * height);
-
     QRgb black = qRgba(0, 0, 0, 0);
 
     QVector<QRgb> originalPixels;
 
     for (uint j = 0; j < height; ++j)
-    {
         for (uint i = 0; i < width; ++i)
-        {
             originalPixels.push_back(inputImage.pixel(i, j));
-        }
-    }
-
 
     const float correctionRadius = sqrt(width * width + height * height) / strength;
     float theta = 0.0;
@@ -62,80 +54,90 @@ QImage ManualCorrect::undistorsing(const float strength, const float zoom, const
             // граница обработки пикселей
             if (sX < width - 1 && sY < height - 1 && sX > 0 && sY > 0)
             {
-                const float sXoverflow = sourceX - sX - 0.5f;
-                const float sYoverflow = sourceY - sY - 0.5f;
-
-                float weight[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-                if (sXoverflow < 0.5f && sYoverflow < 0.5f)
+                if(antialias)
                 {
-                    const float dx = 0.5f - sXoverflow;
-                    const float dy = 0.5f - sYoverflow;
-                    const float cdx = 1.0f - dx;
-                    const float cdy = 1.0f - dy;
 
-                    weight[0] = dx * dy;
-                    weight[1] = dy * cdx;
-                    weight[3] = dx * cdy;
-                    weight[4] = cdx * cdy;
-                }
-                else if (sYoverflow < 0.5f && sXoverflow >= 0.5f)
-                {
-                    const float dx = sXoverflow - 0.5f;
-                    const float dy = 0.5f - sYoverflow;
-                    const float cdx = 1.0f - dx;
-                    const float cdy = 1.0f - dy;
+                    const float sXoverflow = sourceX - sX - 0.5f;
+                    const float sYoverflow = sourceY - sY - 0.5f;
 
-                    weight[1] = dy * cdx;
-                    weight[2] = dx * dy;
-                    weight[4] = cdx * cdy;
-                    weight[5] = dx * cdy;
-                }
-                else if (sYoverflow > 0.5f && sXoverflow < 0.5f)
-                {
-                    const float dx = 0.5f - sXoverflow;
-                    const float dy = sYoverflow - 0.5f;
-                    const float cdx = 1.0f - dx;
-                    const float cdy = 1.0f - dy;
+                    float weight[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-                    weight[3] = dx * cdy;
-                    weight[4] = cdx * cdy;
-                    weight[6] = dx * dy;
-                    weight[7] = cdx * dy;
+                    if (sXoverflow < 0.5f && sYoverflow < 0.5f)
+                    {
+                        const float dx = 0.5f - sXoverflow;
+                        const float dy = 0.5f - sYoverflow;
+                        const float cdx = 1.0f - dx;
+                        const float cdy = 1.0f - dy;
+
+                        weight[0] = dx * dy;
+                        weight[1] = dy * cdx;
+                        weight[3] = dx * cdy;
+                        weight[4] = cdx * cdy;
+                    }
+                    else if (sYoverflow < 0.5f && sXoverflow >= 0.5f)
+                    {
+                        const float dx = sXoverflow - 0.5f;
+                        const float dy = 0.5f - sYoverflow;
+                        const float cdx = 1.0f - dx;
+                        const float cdy = 1.0f - dy;
+
+                        weight[1] = dy * cdx;
+                        weight[2] = dx * dy;
+                        weight[4] = cdx * cdy;
+                        weight[5] = dx * cdy;
+                    }
+                    else if (sYoverflow > 0.5f && sXoverflow < 0.5f)
+                    {
+                        const float dx = 0.5f - sXoverflow;
+                        const float dy = sYoverflow - 0.5f;
+                        const float cdx = 1.0f - dx;
+                        const float cdy = 1.0f - dy;
+
+                        weight[3] = dx * cdy;
+                        weight[4] = cdx * cdy;
+                        weight[6] = dx * dy;
+                        weight[7] = cdx * dy;
+                    }
+                    else
+                    {
+                        const float dx = sXoverflow - 0.5f;
+                        const float dy = sYoverflow - 0.5f;
+                        const float cdx = 1.0f - dx;
+                        const float cdy = 1.0f - dy;
+
+                        weight[4] = cdx * cdy;
+                        weight[5] = dx * cdy;
+                        weight[7] = cdx * dy;
+                        weight[8] = dx * dy;
+                    }
+                    //текущий цвет черный
+                    QColor currentPixel = black;
+                    //интерполяция 9 уровня
+                    for (uint wi = 0; wi < 9; ++wi)
+                    {
+                        const float w = weight[wi];
+                        if (w > 0)
+                        {
+                            const int j_offset = wi / 3 - 1;
+                            const int i_offset = wi % 3 - 1;
+                            //находим положение итогового пиксела
+                            const uint sourceidx = width * (sY + j_offset) + sX + i_offset;
+                            //добавляем интерлолированные цвета
+                            QColor sourcePixel = originalPixels[sourceidx];
+                            currentPixel.setRed(currentPixel.red() + w * sourcePixel.red());
+                            currentPixel.setGreen(currentPixel.green() + w * sourcePixel.green());
+                            currentPixel.setBlue(currentPixel.blue() + w * sourcePixel.blue());
+                        }
+                    }
+                    //добавляем к изображению итоговые пиксели
+                    outputImage.setPixelColor(x, y, currentPixel);
                 }
                 else
                 {
-                    const float dx = sXoverflow - 0.5f;
-                    const float dy = sYoverflow - 0.5f;
-                    const float cdx = 1.0f - dx;
-                    const float cdy = 1.0f - dy;
+                    //добавляем к изображению итоговые пиксели
+                    outputImage.setPixelColor(x, y, inputImage.pixelColor(sX, sY));
+                }
 
-                    weight[4] = cdx * cdy;
-                    weight[5] = dx * cdy;
-                    weight[7] = cdx * dy;
-                    weight[8] = dx * dy;
-                }
-                //текущий цвет черный
-                QColor currentPixel = black;
-                //интерполяция 9 уровня
-                for (uint wi = 0; wi < 9; ++wi)
-                {
-                    const float w = weight[wi];
-                    if (w > 0)
-                    {
-                        const int j_offset = wi / 3 - 1;
-                        const int i_offset = wi % 3 - 1;
-                        //находим положение итогового пиксела
-                        const uint sourceidx = width * (sY + j_offset) + sX + i_offset;
-                        //добавляем интерлолированные цвета
-                        QColor sourcePixel = originalPixels[sourceidx];
-                        currentPixel.setRed(currentPixel.red() + w * sourcePixel.red());
-                        currentPixel.setGreen(currentPixel.green() + w * sourcePixel.green());
-                        currentPixel.setBlue(currentPixel.blue() + w * sourcePixel.blue());
-                    }
-                }
-                //добавляем к изображению итоговые пиксели
-                outputImage.setPixelColor(x, y, currentPixel);
             }
             else
             {   //вместо пустых добавляем черный цвет
@@ -155,13 +157,10 @@ QImage ManualCorrect::cropBlackBorder(const QImage &inputImage, int height, int 
     Point imageCenter = Point(int(imageSize.height * 0.5), int(imageSize.width * 0.5));
 
     if (width > inputImage.width() - 1)
-    {
         width = inputImage.width() - 1;
-    }
+
     if (height > inputImage.height() - 1)
-    {
         height = inputImage.height() - 1;
-    }
 
     int x1 = int(imageCenter.x - width * 0.5);
     int x2 = int(imageCenter.x + width * 0.5);

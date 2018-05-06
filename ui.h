@@ -42,6 +42,7 @@ private slots:
     void on_open_settings_triggered();
     void on_slider_strength_sliderMoved(int position);
     void on_slider_zoom_sliderMoved(int position);
+    void on_save_file_triggered();
 public slots:
     void setSpinners();
 private:

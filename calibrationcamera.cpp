@@ -7,12 +7,13 @@ CalibrationCamera::CalibrationCamera():flag(0), mustInitUndistort(true)
 
 int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar type, int numHeight, int numWidth)
 {
+    qDebug() << "Сработала функция addChessboardPoints()";
     //размерность планара
     Size boardSize(numHeight, numWidth);
     // точки на шахматной доске
     vector<Point2f> imageCorners;
     vector<Point3f> objectCorners;
-
+    clearPoints();
     // точки 3D-сцены:
     // инициализация углов шахматной доски в системе отсчета шахматной доски
     // углы находятся в трехмерном местоположении (X, Y, Z) = (i, j, 0)
@@ -30,7 +31,16 @@ int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar
     for (int i = 0; i < filelist.size(); i++)
     {
         // открываем изображение
-        String file = filelist[i].absoluteFilePath().toUtf8().constData();;
+        String file = filelist[i].absoluteFilePath().toUtf8().constData();
+
+        if((filelist[i].suffix() != "jpg") &&
+                (filelist[i].suffix() != "jpeg") &&
+                (filelist[i].suffix() != "png") &&
+                (filelist[i].suffix() != "tiff") &&
+                (filelist[i].suffix() != "bmp") &&
+                (filelist[i].suffix() != "jp2") &&
+                (filelist[i].suffix() != "gif")) break;
+
         image = cv::imread(file, IMREAD_COLOR);
 
         bool found = false;
@@ -84,43 +94,50 @@ int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar
 void CalibrationCamera::addPoints(const vector<Point2f> &imageCorners, const vector<Point3f> &objectCorners)
 {
     // 2D-изображение точек с одного вида
-    imagePoints.push_back(imageCorners);
+    this->imagePoints.push_back(imageCorners);
     // соответствующие точки 3D-сцены
-    objectPoints.push_back(objectCorners);
+    this->objectPoints.push_back(objectCorners);
+}
+
+void CalibrationCamera::clearPoints()
+{
+    // 2D-изображение точек с одного вида
+    this->imagePoints.clear();
+    // соответствующие точки 3D-сцены
+    this->objectPoints.clear();
 }
 
 // Калибровка камеры
 // возвращает ошибку повторного проецирования
 double CalibrationCamera::calibrate(Mat &cameraMatrix, Mat &distCoeffs)
 {
-    // mustInitUndistort должен быть повторно инициализирован
-    //mustInitUndistort = true;
+    if(this->imagePoints.size() < 1 or this->objectPoints.size() < 1)
+        return -1.0;
     // выходные вращения и сдвиги
     vector<Mat> rvecs, tvecs;
     // запуск калибровки
-    return calibrateCamera(objectPoints, // 3D точки
-                           imagePoints,  // точки изображения
-                           globalImageSize,    // размер изображения
+    return calibrateCamera(this->objectPoints, // 3D точки
+                           this->imagePoints,  // точки изображения
+                           this->globalImageSize,    // размер изображения
                            cameraMatrix, // матрица выходных параметров камеры
                            distCoeffs,   // выходная матрица дисторсии
                            rvecs, tvecs, // параметры Rs, Ts
-                           flag);        // опции при калибровке
+                           this->flag);        // опции при калибровке
 }
 
 // удаление искажений изображения (после калибровки)
 Mat CalibrationCamera::remapImage(const Mat &image, const Mat &cameraMatrix, const Mat &distCoeffs)
 {
+    // используется при искажении изображения
+    Mat map1, map2;
     Mat undistorted;
-    if (mustInitUndistort) { // вызывается один раз для каждой калибровки
-        initUndistortRectifyMap(cameraMatrix,  // вычисленная матрица выходных параметров камеры
-                                distCoeffs,    // вычисленная выходная матрица дисторсии
-                                Mat(),     // опциональное исправление (нет)
-                                Mat(),     // матрица камеры для генерации неискаженных
-                                image.size(),  // size of undistorted
-                                CV_32FC1,      // type of output map
-                                map1, map2);   // the x and y mapping functions
-        mustInitUndistort = false;
-    }
+    initUndistortRectifyMap(cameraMatrix,  // вычисленная матрица выходных параметров камеры
+                            distCoeffs,    // вычисленная выходная матрица дисторсии
+                            Mat(),     // опциональное исправление (нет)
+                            Mat(),     // матрица камеры для генерации неискаженных
+                            image.size(),  // size of undistorted
+                            CV_32FC1,      // type of output map
+                            map1, map2);   // the x and y mapping functions
     // Применяем функции отображения
     remap(image, undistorted, map1, map2, INTER_LINEAR); // тип интерполяции
     return undistorted;
@@ -133,5 +150,5 @@ void CalibrationCamera::setCalibrationFlag(bool radial8CoeffEnabled, bool tangen
     // установка флага, используемого в calibrateCamera()
     flag = 0;
     if (!tangentialParamEnabled) flag += CV_CALIB_ZERO_TANGENT_DIST;
-    if (radial8CoeffEnabled) flag += CV_CALIB_FIX_K6;//CV_CALIB_RATIONAL_MODEL;
+    if (radial8CoeffEnabled) flag += CV_CALIB_RATIONAL_MODEL;
 }

@@ -10,7 +10,7 @@ class ManualCorrect
 {
 public:
     ManualCorrect();
-    QImage undistorsing(const float strength, const float zoom, const QImage &inputImage);
+    QImage undistorsing(const float strength, const float zoom, const QImage &inputImage, bool antialias);
     QImage cropBlackBorder(const QImage &inputImage, int height, int width);
 };
 
