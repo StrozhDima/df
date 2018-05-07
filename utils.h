@@ -16,6 +16,7 @@ public:
     static QString MatToString(const Mat &matrix);
     static void qImageToMat(const QImage &image, OutputArray out);
     static void matToQImage(InputArray image, QImage &out);
+    static void rotateImage(QImage &image, int angle);
 };
 
 #endif // UTILS_H

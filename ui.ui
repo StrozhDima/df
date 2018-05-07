@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Средство коррекции fisheye-изображений</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/label/img/Icon_32x32.png</normaloff>:/label/img/Icon_32x32.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_5">
     <item>
@@ -1273,11 +1277,11 @@
    </widget>
    <widget class="QMenu" name="menu_edit">
     <property name="title">
-     <string>Редактирование</string>
+     <string>Калибровка</string>
     </property>
+    <addaction name="calibr_camera"/>
     <addaction name="save_settings"/>
     <addaction name="open_settings"/>
-    <addaction name="calibr_camera"/>
    </widget>
    <widget class="QMenu" name="menu_view">
     <property name="title">
@@ -1287,10 +1291,21 @@
     <addaction name="zoom_out"/>
     <addaction name="normal_size"/>
     <addaction name="fil_to_window"/>
+    <addaction name="rotate_right"/>
+    <addaction name="rotate_left"/>
+    <addaction name="reset"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+    <addaction name="action"/>
+    <addaction name="action_2"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_view"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -1306,6 +1321,11 @@
    <addaction name="zoom_in"/>
    <addaction name="zoom_out"/>
    <addaction name="fil_to_window"/>
+   <addaction name="separator"/>
+   <addaction name="rotate_left"/>
+   <addaction name="rotate_right"/>
+   <addaction name="separator"/>
+   <addaction name="reset"/>
    <addaction name="separator"/>
    <addaction name="exit_app"/>
   </widget>
@@ -1413,7 +1433,44 @@
   </action>
   <action name="calibr_camera">
    <property name="text">
-    <string>Калибровка камеры</string>
+    <string>Выполнить калибровку</string>
+   </property>
+  </action>
+  <action name="rotate_right">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/menu/img/Rotate_right_32x32.png</normaloff>:/menu/img/Rotate_right_32x32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Повернуть на 90 вправо</string>
+   </property>
+  </action>
+  <action name="rotate_left">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/menu/img/Rotate_left_32x32.png</normaloff>:/menu/img/Rotate_left_32x32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Повернуть на 90 влево</string>
+   </property>
+  </action>
+  <action name="reset">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/menu/img/Refresh_32x32.png</normaloff>:/menu/img/Refresh_32x32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Сбросить</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Руководство пользователя</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>О программе</string>
    </property>
   </action>
  </widget>

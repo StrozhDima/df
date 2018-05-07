@@ -86,3 +86,8 @@ void Core::setDistCoeffs(const Mat &distCoeffs)
     this->distCoeffs = ((Mat1d(1, 14) << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     this->distCoeffs = distCoeffs;
 }
+
+void Core::rotateImage(QImage &image, int angle)
+{
+    Utils::rotateImage(image, angle);
+}

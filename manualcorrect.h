@@ -2,8 +2,6 @@
 #define MANUALCORRECT_H
 #include <QImage>
 #include <QDebug>
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include "utils.h"
 
 class ManualCorrect

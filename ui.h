@@ -43,6 +43,9 @@ private slots:
     void on_slider_strength_sliderMoved(int position);
     void on_slider_zoom_sliderMoved(int position);
     void on_save_file_triggered();
+    void on_rotate_right_triggered();
+    void on_rotate_left_triggered();
+    void on_reset_triggered();
 public slots:
     void setSpinners();
 private:
@@ -52,6 +55,7 @@ private:
     double scaleFactor;
     QImage image;
     QImage processedImage;
+    QImage originImage;
     QLabel *labelImage;
     QString fileName;
     QPixmap *pixmap;

@@ -15,7 +15,7 @@ public:
     //Setters
     void setCameraMatrix(const Mat &cameraMatrix);
     void setDistCoeffs(const Mat &distCoeffs);
-
+    void rotateImage(QImage &image, int angle);
     void setMustInitUndistort(bool doUndistort);
     double calibrationCamera(const QFileInfoList &filelist, int &success, TypePlanar type, bool isRadial, bool isTangenc, int boardW, int boardH);
     void undistortCameraCalibration(const QImage &imageSource, QImage &imageDest);

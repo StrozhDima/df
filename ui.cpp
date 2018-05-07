@@ -48,6 +48,32 @@ void UI::updateActions()
 	ui->normal_size->setEnabled(!this->fileName.isNull());
 	ui->fil_to_window->setEnabled(!this->fileName.isNull());
 	ui->push_button_apply->setEnabled(!this->fileName.isNull());
+	ui->rotate_left->setEnabled(!this->fileName.isNull());
+	ui->rotate_right->setEnabled(!this->fileName.isNull());
+	ui->reset->setEnabled(!this->fileName.isNull());
+	ui->slider_strength->setEnabled(!this->fileName.isNull());
+	ui->slider_zoom->setEnabled(!this->fileName.isNull());
+	ui->spin_box_cx->setEnabled(!this->fileName.isNull());
+	ui->spin_box_cy->setEnabled(!this->fileName.isNull());
+	ui->spin_box_fx->setEnabled(!this->fileName.isNull());
+	ui->spin_box_fy->setEnabled(!this->fileName.isNull());
+	ui->spin_box_height->setEnabled(!this->fileName.isNull());
+	ui->spin_box_width->setEnabled(!this->fileName.isNull());
+	ui->spin_box_k1->setEnabled(!this->fileName.isNull());
+	ui->spin_box_k2->setEnabled(!this->fileName.isNull());
+	ui->spin_box_k3->setEnabled(!this->fileName.isNull());
+	ui->spin_box_k4->setEnabled(!this->fileName.isNull());
+	ui->spin_box_k5->setEnabled(!this->fileName.isNull());
+	ui->spin_box_k6->setEnabled(!this->fileName.isNull());
+	ui->spin_box_p1->setEnabled(!this->fileName.isNull());
+	ui->spin_box_p2->setEnabled(!this->fileName.isNull());
+	ui->calibr_camera->setEnabled(!this->fileName.isNull());
+	ui->save_settings->setEnabled(!this->fileName.isNull());
+	ui->open_settings->setEnabled(!this->fileName.isNull());
+	ui->menu_edit->setEnabled(!this->fileName.isNull());
+	ui->menu_view->setEnabled(!this->fileName.isNull());
+	ui->check_box_antial->setEnabled(!this->fileName.isNull());
+	ui->check_box_preview->setEnabled(!this->fileName.isNull());
 }
 
 //нажата кнопка меню "Открыть"
@@ -56,7 +82,7 @@ void UI::on_open_file_triggered()
 	FileManager::initialize(fileDialog, QFileDialog::AcceptOpen, "image/jpeg", "jpg");
 	if(this->fileDialog->exec() == QDialog::Accepted) {
 		this->fileName = this->fileDialog->selectedFiles().first();
-		this->image = FileManager::loadImageFile(this->fileName);
+		this->originImage = this->processedImage = this->image = FileManager::loadImageFile(this->fileName);
 		const QString message = tr("Открыт \"%1\", %2x%3, Глубина: %4").arg(QDir::toNativeSeparators(this->fileName)).arg(this->image.width()).arg(this->image.height()).arg(this->image.depth());
 		statusBar()->showMessage(message);
 		setImageToLabel(this->image);
@@ -316,4 +342,24 @@ void UI::updateManualSpinners(bool zero)
 		ui->spin_box_width->setValue(this->image.width());
 		ui->spin_box_height->setValue(this->image.height());
 	}
+}
+
+void UI::on_rotate_right_triggered()
+{
+	this->core->rotateImage(this->image, 90);
+	this->core->rotateImage(this->processedImage, 90);
+	setImageToLabel(this->processedImage);
+}
+
+void UI::on_rotate_left_triggered()
+{
+	this->core->rotateImage(this->image, -90);
+	this->core->rotateImage(this->processedImage, -90);
+	setImageToLabel(this->processedImage);
+}
+
+void UI::on_reset_triggered()
+{
+	this->image = this->processedImage = this->originImage;
+	setImageToLabel(this->image);
 }
