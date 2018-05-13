@@ -32,15 +32,6 @@ int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar
     {
         // открываем изображение
         String file = filelist[i].absoluteFilePath().toUtf8().constData();
-
-        if((filelist[i].suffix() != "jpg") &&
-                (filelist[i].suffix() != "jpeg") &&
-                (filelist[i].suffix() != "png") &&
-                (filelist[i].suffix() != "tiff") &&
-                (filelist[i].suffix() != "bmp") &&
-                (filelist[i].suffix() != "jp2") &&
-                (filelist[i].suffix() != "gif")) break;
-
         image = cv::imread(file, IMREAD_COLOR);
 
         bool found = false;
@@ -67,8 +58,11 @@ int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar
         }
 
         // получаем точность субпикселей по углам
-        cvtColor(image, grayImage, CV_BGR2GRAY);
-        cornerSubPix(grayImage, imageCorners, Size(5, 5), Size(-1, -1), TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 30, 0.1));
+        if(found)
+        {
+            cvtColor(image, grayImage, CV_BGR2GRAY);
+            cornerSubPix(grayImage, imageCorners, Size(5, 5), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
+        }
 
         // если у нас хорошее изображение планара, добавляеи его к нашим данным
 
@@ -84,7 +78,7 @@ int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar
         // рисуем углы
         drawChessboardCorners(image, boardSize, imageCorners, found);
         imshow(file.c_str(), image);
-        waitKey(100);
+        waitKey(500);
         // закрыть окно с планаром
         destroyWindow(file.c_str());
     }

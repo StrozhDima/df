@@ -85,3 +85,35 @@ void Utils::rotateImage(QImage &image, int angle)
     matrix.rotate(angle);
     image = image.transformed(matrix);
 }
+
+QFileInfoList Utils::filteringImage(const QFileInfoList &filelist)
+{
+    QFileInfoList newList;
+       QImage image;
+       // для всех изображений в списке файлов
+       for (int i = 0; i < filelist.size(); i++)
+       {
+           if((filelist[i].suffix() != "jpg") &&
+                   (filelist[i].suffix() != "jpeg") &&
+                   (filelist[i].suffix() != "png") &&
+                   (filelist[i].suffix() != "tiff") &&
+                   (filelist[i].suffix() != "bmp") &&
+                   (filelist[i].suffix() != "jp2") &&
+                   (filelist[i].suffix() != "gif")) break;
+           newList.append(filelist[i]);
+       }
+
+       if(newList.size() > 0)
+           image.load(filelist[0].absoluteFilePath().toStdString().c_str());
+       else return newList;
+
+       // для всех отфильтрованных в списке файлов
+       for (int i = 0; i < filelist.size(); i++)
+       {
+           QImage nextImage;
+           nextImage.load(filelist[i].absoluteFilePath().toStdString().c_str());
+           if((nextImage.height() != image.height()) && (nextImage.width() != image.width()))
+                   newList.removeAt(i);
+       }
+       return newList;
+}

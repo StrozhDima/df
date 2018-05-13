@@ -22,20 +22,23 @@ void Core::setMustInitUndistort(bool doUndistort)
 
 double Core::calibrationCamera(const QFileInfoList &filelist, int &success, TypePlanar type, bool isRadial, bool isTangenc, int boardW, int boardH)
 {
+
+    QFileInfoList newFilelist = Utils::filteringImage(filelist);
+
     //если выбран тип планара Шахматная доска
     if(type == TypePlanar::CHESSBOARD)
     {
-        success = calibCamera.addChessboardPoints(filelist, CalibrationCamera::CHESSBOARD, boardW, boardH);
+        success = calibCamera.addChessboardPoints(newFilelist, CalibrationCamera::CHESSBOARD, boardW, boardH);
     }
     //если выбран тип планара Сетка с окружностями
     else if(type == TypePlanar::CIRCLESGRID)
     {
-        success = calibCamera.addChessboardPoints(filelist, CalibrationCamera::CIRCLESGRID, boardW, boardH);
+        success = calibCamera.addChessboardPoints(newFilelist, CalibrationCamera::CIRCLESGRID, boardW, boardH);
     }
     //если выбран тип планара ассиметричная сетка с окружностями
     else if(type == TypePlanar::ASYMETRIC_CIRCLESGRID)
     {
-        success = calibCamera.addChessboardPoints(filelist, CalibrationCamera::ASYMETRIC_CIRCLESGRID, boardW, boardH);
+        success = calibCamera.addChessboardPoints(newFilelist, CalibrationCamera::ASYMETRIC_CIRCLESGRID, boardW, boardH);
     }
 
     //если выбран тип искажения радиальное

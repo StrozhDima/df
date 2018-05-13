@@ -5,7 +5,6 @@
 #include "filemanager.h"
 #include "core.h"
 #include <QDebug>
-#include <QThread>
 
 namespace Ui {
 class CalibrationUI;
