@@ -23,22 +23,22 @@ void Core::setMustInitUndistort(bool doUndistort)
 double Core::calibrationCamera(const QFileInfoList &filelist, int &success, TypePlanar type, bool isRadial, bool isTangenc, int boardW, int boardH)
 {
 
-    QFileInfoList newFilelist = Utils::filteringImage(filelist);
+    QFileInfoList filteredList = Utils::filteringImage(filelist);
 
     //если выбран тип планара Шахматная доска
     if(type == TypePlanar::CHESSBOARD)
     {
-        success = calibCamera.addChessboardPoints(newFilelist, CalibrationCamera::CHESSBOARD, boardW, boardH);
+        success = calibCamera.addChessboardPoints(filteredList, CalibrationCamera::CHESSBOARD, boardW, boardH);
     }
     //если выбран тип планара Сетка с окружностями
     else if(type == TypePlanar::CIRCLESGRID)
     {
-        success = calibCamera.addChessboardPoints(newFilelist, CalibrationCamera::CIRCLESGRID, boardW, boardH);
+        success = calibCamera.addChessboardPoints(filteredList, CalibrationCamera::CIRCLESGRID, boardW, boardH);
     }
     //если выбран тип планара ассиметричная сетка с окружностями
     else if(type == TypePlanar::ASYMETRIC_CIRCLESGRID)
     {
-        success = calibCamera.addChessboardPoints(newFilelist, CalibrationCamera::ASYMETRIC_CIRCLESGRID, boardW, boardH);
+        success = calibCamera.addChessboardPoints(filteredList, CalibrationCamera::ASYMETRIC_CIRCLESGRID, boardW, boardH);
     }
 
     //если выбран тип искажения радиальное
@@ -55,11 +55,11 @@ double Core::calibrationCamera(const QFileInfoList &filelist, int &success, Type
     return error;
 }
 
-void Core::undistortCameraCalibration(const QImage &imageSource, QImage &imageDest)
+void Core::undistortCameraCalibration(const QImage &imageSource, QImage &matProcessedImage)
 {
     Mat matImage;
     Utils::qImageToMat(imageSource, matImage);
-    Utils::matToQImage(calibCamera.remapImage(matImage, this->cameraMatrix, this->distCoeffs), imageDest);
+    Utils::matToQImage(calibCamera.remapImage(matImage, this->cameraMatrix, this->distCoeffs), matProcessedImage);
 }
 
 void Core::manualCorrection(const float strength, const float zoom, const QImage &inputImage, QImage &outputImage, bool antialias)

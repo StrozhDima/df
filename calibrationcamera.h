@@ -16,17 +16,19 @@ public:
     CalibrationCamera();
     //перечисление типов планаров
     enum Planar {CHESSBOARD, CIRCLESGRID, ASYMETRIC_CIRCLESGRID};
+    void setMustInitUndistort(bool value) { mustInitUndistort = value; }
+    // Калибровка камеры
     // открываем изображения шахматной доски и извлекаем угловые точки
     int addChessboardPoints(const QFileInfoList &filelist, // список с именами файлов
                             CalibrationCamera::Planar type, // тип планара
                             int numHeight, int numWidth); // размерность планара
-    // Калибровка камеры
     // возвращает ошибку повторного проецирования
     double calibrate(Mat &cameraMatrix, Mat &distCoeffs);
     // удалить искажение изображения (после калибровки)
     Mat remapImage(const Mat &image, const Mat &cameraMatrix, const Mat &distCoeffs);
     // установка параметров калибровки
     void setCalibrationFlag(bool radial8CoeffEnabled = false, bool tangentialParamEnabled = false);
+private:
     // Getters
     Mat getCameraMatrix() { return cameraMatrix; }
     Mat getDistCoeffs()   { return distCoeffs; }
@@ -34,8 +36,6 @@ public:
     // Setters
     void setCameraMatrix(const Mat &cameraMatrix) {this->cameraMatrix = cameraMatrix;}
     void setDistCoeffs(const Mat &distCoeffs) {this->distCoeffs = distCoeffs;}
-    void setMustInitUndistort(bool value) { mustInitUndistort = value; }
-private:
     // добавляем точки сцены и соответствующие точки изображения
     void addPoints(const vector<Point2f> &imageCorners, const vector<Point3f> &objectCorners);
     //удаляем точки сцены и соответствующие точки изображения

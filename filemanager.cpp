@@ -50,3 +50,10 @@ QString FileManager::openFolder(QWidget *parent)
 {
     return QFileDialog::getExistingDirectory(parent, parent->tr("Выбор папки"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 }
+
+//загрузка файла изображния
+QString FileManager::loadSettingsFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(0, "Загрузка параметров камеры", QDir::currentPath(), "Matrix (*.yml);;Matrix (*.xml);;All files (*.*)", new QString("Matrix (*.yml)"));
+    return fileName;
+}

@@ -20,13 +20,6 @@ class UI : public QMainWindow
 public:
     explicit UI(QWidget *parent = 0);
     ~UI();
-    void setImageToLabel(const QImage &image);
-    void scaleImage(double factor);
-    void updateActions();
-    void setMatrixes();
-    void applySettings();
-    void updateManualSpinners(bool zero);
-    void applyManualSetting();
 private slots:
     void on_open_file_triggered();
     void on_save_file_as_triggered();
@@ -46,8 +39,10 @@ private slots:
     void on_rotate_right_triggered();
     void on_rotate_left_triggered();
     void on_reset_triggered();
-public slots:
+    void on_action_3_triggered();
     void setSpinners();
+    void on_about_triggered();
+
 private:
     Ui::UI *ui;
     Core *core;
@@ -60,6 +55,14 @@ private:
     QString fileName;
     QPixmap *pixmap;
     CalibrationUI *calibUI;
+    void setImageToLabel(const QImage &image);
+    void scaleImage(double factor);
+    void updateActions();
+    void setMatrixes();
+    void applySettings();
+    void updateManualSpinners(bool zero);
+    void applyManualSetting();
+    void showCalibWindow();
 };
 
 #endif // UI_H

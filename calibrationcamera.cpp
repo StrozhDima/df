@@ -2,7 +2,6 @@
 
 CalibrationCamera::CalibrationCamera():flag(0), mustInitUndistort(true)
 {
-
 }
 
 int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar type, int numHeight, int numWidth)
@@ -77,8 +76,12 @@ int CalibrationCamera::addChessboardPoints(const QFileInfoList &filelist, Planar
 
         // рисуем углы
         drawChessboardCorners(image, boardSize, imageCorners, found);
+        namedWindow(file.c_str(), WINDOW_NORMAL);
+        moveWindow(file.c_str(), 0, 0);
+        resizeWindow(file.c_str(), 700, 700);
         imshow(file.c_str(), image);
-        waitKey(500);
+        waitKey(2000);
+        setWindowProperty(file.c_str(), CV_WND_PROP_FULLSCREEN, CV_WINDOW_NORMAL);
         // закрыть окно с планаром
         destroyWindow(file.c_str());
     }
@@ -124,7 +127,7 @@ Mat CalibrationCamera::remapImage(const Mat &image, const Mat &cameraMatrix, con
 {
     // используется при искажении изображения
     Mat map1, map2;
-    Mat undistorted;
+    Mat matProcessedImage;
     initUndistortRectifyMap(cameraMatrix,  // вычисленная матрица выходных параметров камеры
                             distCoeffs,    // вычисленная выходная матрица дисторсии
                             Mat(),     // опциональное исправление (нет)
@@ -133,8 +136,8 @@ Mat CalibrationCamera::remapImage(const Mat &image, const Mat &cameraMatrix, con
                             CV_32FC1,      // type of output map
                             map1, map2);   // the x and y mapping functions
     // Применяем функции отображения
-    remap(image, undistorted, map1, map2, INTER_LINEAR); // тип интерполяции
-    return undistorted;
+    remap(image, matProcessedImage, map1, map2, INTER_LINEAR); // тип интерполяции
+    return matProcessedImage;
 }
 
 // установка параметров калибровки

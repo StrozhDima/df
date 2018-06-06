@@ -1,6 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 #include <opencv2/core.hpp>
+#include <QDebug>
 
 using namespace cv;
 

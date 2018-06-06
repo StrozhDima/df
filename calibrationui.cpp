@@ -57,9 +57,13 @@ void CalibrationUI::on_button_calibration_clicked()
 void CalibrationUI::on_open_folder_triggered()
 {
     qDebug() << "нажата кнопка Открыть папку";
-    this->folderName = FileManager::openFolder(this);
-    const QString message = tr("Открыт: \"%1\"").arg(QDir::toNativeSeparators(this->folderName));
-    statusBar()->showMessage(message);
+    try {
+        this->folderName = FileManager::openFolder(this);
+        const QString message = tr("Открыт: \"%1\"").arg(QDir::toNativeSeparators(this->folderName));
+        statusBar()->showMessage(message);
+    } catch (Exception e) {
+        QMessageBox::critical(this, "Ошибка!", QString("Директория %1 не была открыта. Ошибка: %2").arg(this->folderName).arg(e.msg.c_str()));
+    }
 }
 
 void CalibrationUI::on_exit_calibration_triggered()

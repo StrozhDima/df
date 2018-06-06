@@ -16,6 +16,7 @@ public:
     static bool saveImageFile(const QString &fileName, const QImage &image);
     static void initialize(QFileDialog *dialog, QFileDialog::AcceptMode acceptMode, const QString &mimeTypeFilter, const QString &suffix);
     static QString openFolder(QWidget *parent);
+    static QString loadSettingsFile();
 private:
 
 };
